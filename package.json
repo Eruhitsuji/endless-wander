@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
+  "author": {
+    "name": "Eruhitsuji",
+    "email": "132959232+Eruhitsuji@users.noreply.github.com"
+  },
   "description": "Seeded voxel walking sandbox with a browser edition and Electron desktop builds.",
   "main": "electron/main.cjs",
   "scripts": {
@@ -38,19 +42,29 @@
       }
     ],
     "win": {
-      "target": ["nsis", "portable"]
+      "target": [
+        "nsis",
+        "portable"
+      ]
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     },
     "mac": {
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "category": "public.app-category.games"
     },
     "linux": {
-      "target": ["AppImage", "deb"],
-      "category": "Game"
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Game",
+      "maintainer": "132959232+Eruhitsuji@users.noreply.github.com"
     }
   }
 }
