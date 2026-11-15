@@ -3,6 +3,12 @@ name: Build desktop release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing or new version tag to publish
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -70,6 +76,7 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
           files: release-assets/*
           generate_release_notes: true
           fail_on_unmatched_files: true
