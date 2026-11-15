@@ -30,7 +30,17 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Build desktop packages
+        if: matrix.target != 'mac'
         run: npm run dist:${{ matrix.target }}
+      - name: Build signed and notarized macOS packages when signing secrets are configured
+        if: matrix.target == 'mac'
+        env:
+          CSC_LINK: ${{ secrets.MACOS_CERTIFICATE }}
+          CSC_KEY_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: npm run dist:mac
       - name: Upload package artifacts
         uses: actions/upload-artifact@v4
         with:
