@@ -32,15 +32,23 @@ jobs:
       - name: Build desktop packages
         if: matrix.target != 'mac'
         run: npm run dist:${{ matrix.target }}
-      - name: Build signed and notarized macOS packages when signing secrets are configured
+      - name: Build macOS packages
         if: matrix.target == 'mac'
         env:
-          CSC_LINK: ${{ secrets.MACOS_CERTIFICATE }}
-          CSC_KEY_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: npm run dist:mac
+        run: |
+          if [ -n "$MACOS_CERTIFICATE" ] && [ -n "$MACOS_CERTIFICATE_PASSWORD" ] && [ -n "$APPLE_ID" ] && [ -n "$APPLE_APP_SPECIFIC_PASSWORD" ] && [ -n "$APPLE_TEAM_ID" ]; then
+            export CSC_LINK="$MACOS_CERTIFICATE"
+            export CSC_KEY_PASSWORD="$MACOS_CERTIFICATE_PASSWORD"
+          else
+            echo "macOS signing secrets are not configured; building unsigned packages."
+            unset APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID CSC_LINK CSC_KEY_PASSWORD
+          fi
+          npm run dist:mac
       - name: Upload package artifacts
         uses: actions/upload-artifact@v4
         with:
